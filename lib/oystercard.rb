@@ -4,11 +4,10 @@ MAXIMUM_BALANCE = 90
 MINIMUM_BALANCE = 1
 
   attr_reader :balance
-  attr_reader :in_use
+  attr_reader :entry_station
 
   def initialize
     @balance = 0
-    @in_use = false
     @minimum = MINIMUM_BALANCE
   end
 
@@ -17,20 +16,20 @@ MINIMUM_BALANCE = 1
    @balance += amount
   end
 
-  def touch_in
+  def touch_in(entry_station)
     raise "Insufficient funds to touch in" if insufficient_funds?
-    @in_use = true
+    @entry_station = entry_station
     return "You've touched in"
   end
 
   def touch_out
-    @in_use = false
+    @entry_station = nil
     deduct(@minimum)
     return "You've touched out"
   end
 
   def in_journey?
-    @in_use
+    !!@entry_station
   end
 
   def insufficient_funds?
@@ -42,7 +41,7 @@ MINIMUM_BALANCE = 1
   end
 
   private
-  
+
   def deduct(fare)
     @balance -= fare
   end

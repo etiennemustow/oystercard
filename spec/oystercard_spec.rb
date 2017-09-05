@@ -23,24 +23,36 @@ describe Oystercard do
     end
    end
 
+  describe '#touch_in' do
+    let(:entry_station) {double :entry_station}
 
-  it "is initially not in a journey" do
+    it "is initially not in a journey" do
     expect(subject).not_to be_in_journey
   end
 
   it "can be touched in" do
     subject.top_up 50
-    subject.touch_in
+    subject.touch_in(entry_station)
     expect(subject).to be_in_journey
   end
 
-  it "raises an error if touched in with minimum balance" do
-    expect{ subject.touch_in}.to raise_error "Insufficient funds to touch in"
+  it "remembers the entry station" do
+    subject.top_up 50
+    subject.touch_in(entry_station)
+    expect(subject.entry_station).to eq entry_station
   end
 
-  it "can be touched out" do
+  it "raises an error if touched in with minimum balance" do
+    expect{ subject.touch_in(entry_station)}.to raise_error "Insufficient funds to touch in"
+  end
+end
+
+  describe '#touch_out' do
+    let(:entry_station) {double :entry_station}
+
+   it "can be touched out" do
     subject.top_up 50
-    subject.touch_in
+    subject.touch_in(entry_station)
     subject.touch_out
     expect(subject).not_to be_in_journey
   end
@@ -48,16 +60,21 @@ describe Oystercard do
   it "deducts the minimum fare when touched out" do
     subject.top_up 20
     subject.check_balance
-    subject.touch_in
+    subject.touch_in(entry_station)
     subject.touch_out
     expect{ subject.touch_out}.to change{subject.check_balance}.by(-Oystercard::MINIMUM_BALANCE)
   end
+
+end
+
   describe "#check_balance" do
     it "displays balance" do
       subject.top_up 50
       expect(subject.check_balance).to eq 50
     end
   end
+
+
 
 
 end
