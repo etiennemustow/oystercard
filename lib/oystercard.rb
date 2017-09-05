@@ -5,10 +5,13 @@ MINIMUM_BALANCE = 1
 
   attr_reader :balance
   attr_reader :entry_station
+  attr_reader :history
+  attr_reader :exit_station
 
   def initialize
     @balance = 0
     @minimum = MINIMUM_BALANCE
+    @history = []
   end
 
   def top_up(amount)
@@ -22,7 +25,9 @@ MINIMUM_BALANCE = 1
     return "You've touched in"
   end
 
-  def touch_out
+  def touch_out(exit_station)
+    current_journey = {entry_station: entry_station, exit_station: exit_station}
+    @history << current_journey
     @entry_station = nil
     deduct(@minimum)
     return "You've touched out"

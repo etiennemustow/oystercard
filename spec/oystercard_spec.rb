@@ -49,11 +49,12 @@ end
 
   describe '#touch_out' do
     let(:entry_station) {double :entry_station}
+    let(:exit_station) {double :exit_station}
 
    it "can be touched out" do
     subject.top_up 50
     subject.touch_in(entry_station)
-    subject.touch_out
+    subject.touch_out(exit_station)
     expect(subject).not_to be_in_journey
   end
 
@@ -61,9 +62,19 @@ end
     subject.top_up 20
     subject.check_balance
     subject.touch_in(entry_station)
-    subject.touch_out
-    expect{ subject.touch_out}.to change{subject.check_balance}.by(-Oystercard::MINIMUM_BALANCE)
+    subject.touch_out(exit_station)
+    expect{ subject.touch_out(exit_station)}.to change{subject.check_balance}.by(-Oystercard::MINIMUM_BALANCE)
   end
+
+  it 'saves the journey history' do
+    subject.top_up 20
+    subject.check_balance
+    subject.touch_in(entry_station)
+    subject.touch_out(exit_station)
+    current_journey = {entry_station: entry_station, exit_station: exit_station}
+    expect(subject.history).to include current_journey
+  end
+
 
 end
 
