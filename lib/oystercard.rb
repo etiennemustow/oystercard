@@ -17,10 +17,6 @@ MINIMUM_BALANCE = 1
    @balance += amount
   end
 
-  def deduct(fare)
-    @balance -= fare
-  end
-
   def touch_in
     raise "Insufficient funds to touch in" if insufficient_funds?
     @in_use = true
@@ -29,6 +25,7 @@ MINIMUM_BALANCE = 1
 
   def touch_out
     @in_use = false
+    deduct(@minimum)
     return "You've touched out"
   end
 
@@ -43,4 +40,12 @@ MINIMUM_BALANCE = 1
   def check_balance
     @balance
   end
+
+  private
+  
+  def deduct(fare)
+    @balance -= fare
+  end
+
+
 end
