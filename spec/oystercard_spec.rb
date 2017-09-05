@@ -26,18 +26,27 @@ describe Oystercard do
   end
 
   it "can be touched in" do
+    subject.top_up 50
     subject.touch_in
     expect(subject).to be_in_journey
   end
 
+  it "raises an error if touched in with minimum balance" do
+    expect{ subject.touch_in}.to raise_error "Insufficient funds to touch in"
+  end
+
   it "can be touched out" do
+    subject.top_up 50
     subject.touch_in
     subject.touch_out
     expect(subject).not_to be_in_journey
   end
 
   describe "#check_balance" do
-    it { is_expected.to respond_to(:check_balance) }
+    it "displays balance" do
+      subject.top_up 50
+      expect(subject.check_balance).to eq 50
+    end
   end
 
 
